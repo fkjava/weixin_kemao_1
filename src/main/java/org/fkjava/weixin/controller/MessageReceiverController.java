@@ -42,7 +42,7 @@ public class MessageReceiverController {
 	// 消息的格式是XML形式的字符串，整个消息放入了请求体里面。
 	@PostMapping
 	public String onMessage(@RequestBody String xml) {
-		LOG.debug("收到用户发送给公众号的信息: \n-----------------------------------------\n{0}\\n-----------------------------------------\\n", xml);
+		LOG.debug("收到用户发送给公众号的信息: \n-----------------------------------------\n{}\\n-----------------------------------------\\n", xml);
 		
 		// 由于后面会把消息放入队列中，所以这里直接返回success。
 		return "success";
