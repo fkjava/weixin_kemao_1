@@ -1,5 +1,11 @@
 package org.fkjava.weixin.controller;
 
+import java.io.StringReader;
+
+import javax.xml.bind.JAXB;
+
+import org.fkjava.weixin.domain.InMessage;
+import org.fkjava.weixin.service.MessageTypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +47,29 @@ public class MessageReceiverController {
 	// @PostMapping专门用于处理POST请求。
 	// 消息的格式是XML形式的字符串，整个消息放入了请求体里面。
 	@PostMapping
-	public String onMessage(@RequestBody String xml) {
-		LOG.debug("收到用户发送给公众号的信息: \n-----------------------------------------\n{}\\n-----------------------------------------\\n", xml);
-		
+	public String onMessage(@RequestParam("signature") String signature, //
+			@RequestParam("timestamp") String timestamp, //
+			@RequestParam("nonce") String nonce, //
+			@RequestBody String xml) {
+		LOG.debug("收到用户发送给公众号的信息: \n-----------------------------------------\n"
+				+ "{}\n-----------------------------------------\n", xml);
+
+//		if (xml.contains("<MsgType><![CDATA[text]]></MsgType>")) {
+//		} else if (xml.contains("<MsgType><![CDATA[image]]></MsgType>")) {
+//		} else if (xml.contains("<MsgType><![CDATA[voice]]></MsgType>")) {
+//		} else if (xml.contains("<MsgType><![CDATA[video]]></MsgType>")) {
+//		} else if (xml.contains("<MsgType><![CDATA[location]]></MsgType>")) {
+//		}
+
+		// 截取消息类型
+		String type = xml.substring(0);
+		Class<InMessage> cla = MessageTypeMapper.getClass(type);
+
+		// 使用JAXB完成XML转换为Java对象的操作
+		InMessage inMessage = JAXB.unmarshal(new StringReader(xml), cla);
+
+		LOG.debug("转换得到的消息对象 \n{}\n", inMessage.toString());
+
 		// 由于后面会把消息放入队列中，所以这里直接返回success。
 		return "success";
 	}
