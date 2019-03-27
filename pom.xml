@@ -110,6 +110,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!-- fork为true的时候，将可以使用mvn spring-boot:start启动程序，并且可以使用mvn spring-boot:stop停止程序 -->
+					<fork>true</fork>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
